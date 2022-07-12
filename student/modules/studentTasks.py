@@ -174,3 +174,12 @@ def addNewLesson(data, user):
             time_spent=time_spent
         )
         lessonDone.save()
+
+
+def validateCheckInTime():
+    time = datetime.now() - timedelta(hours=4)
+    time = time.hour
+    if time >= 12 or time < 6:
+        return False
+    else:
+        return True

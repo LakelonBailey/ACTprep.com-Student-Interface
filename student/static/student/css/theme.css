@@ -104,10 +104,6 @@ html::-webkit-scrollbar {
 .quiz-info {
     text-align: justify;
 }
-.sec-title {
-    padding: 8px;
-    border-bottom: 1px solid gray;
-}
 .navbar-brand {
     width: 100%;
 }
@@ -212,7 +208,13 @@ html::-webkit-scrollbar {
     display: flex;
     justify-content: space-evenly;
 }
-
+.sec-title-cont {
+    height: 35px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid gray;
+    display: flex;
+    justify-content: space-between;
+}
 @media screen and (max-width: 575px) {
     .dash-head {
         display: flex;

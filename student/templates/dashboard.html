@@ -3,11 +3,27 @@
 <title>Dashboard</title>
 {% endblock %}
 {% block body %}
-<h2 class="title is-size-4 sec-title">{{ user.first_name }}'s Student Dashboard</h2>
+<div class="sec-title-cont">
+    <h2 class="title is-size-4 sec-title">
+        {{ user.first_name }}'s Student Dashboard
+    </h2>
+    {% if stats.did_check_in %}
+    <p class="icon-text is-success">
+        <span class="icon has-text-success">
+            <i class="fas fa-check"></i>
+        </span>
+        <span class="has-text-success">Checked in</span>
+    </p>
+    {% elif can_check_in and not stats.did_check_in %}
+    <a class="button is-small is-success" href="/student/checkin/">Check in</a>
+    {% endif %}
+</div>
 <div class="sec">
     <div class="modules">
         <div class="module box">
-            <h3 class="title is-size-6 mod-title">Today's Stats</h3>
+            <h3 class="title is-size-6 mod-title">
+                Today's Stats
+            </h3>
             <form action="/student/inputstats/" method="post">
                 {% csrf_token %}
                 <div class="field">
