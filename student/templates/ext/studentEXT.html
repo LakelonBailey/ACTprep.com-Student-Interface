@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/bulma.min.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/all.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'student/css/theme.css' %}">
+      <script type="text/javascript" src="{% static 'student/js/student.js' %}"></script>
+      <script type="text/javascript" src="{% static 'bulma/js/all.js' %}"></script>
+      {% block title %}
+      {% endblock %}
+  </head>
+  <body class="home">
+    <header class="student-header">
+      <div class="dash-head">
+        <img src="{% static 'student/images/oa_header_logo.png' %}" href="/student/dashboard">
+          <div class="field is-grouped">
+            <div class="control">
+              <a class="nav-btn button" href="/student/dashboard">
+                Home
+              </a>
+            </div>
+            <div class="control">
+              <a class="nav-btn button" href="/student/contact">
+                Contact
+              </a>
+            </div>
+            <div class="control">
+              <a class="nav-btn button" href="/accounts/logout">
+                Log out
+              </a>
+            </div>
+          </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section is-small sec-divide"></section>
+      <section class="section columns">
+        <div class="container column">
+          <div class="box mx-1 main-box">
+            <nav class="breadcrumb has-bullet-separator is-medium" aria-label="breadcrumbs">
+              <ul>
+                <li><a href="/student/dashboard">Dashboard</a></li>
+                <li><a href="/student/english">English</a></li>
+                <li><a href="/student/math">Math</a></li>
+              </ul>
+            </nav>
+            {% block body %}
+            {% endblock %}
+          </div>
+        </div>
+      </section>
+    </main>
+      
+
+
+
+
+  </body>
+</html>

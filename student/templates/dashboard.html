@@ -1,0 +1,386 @@
+{% extends 'ext/studentEXT.html' %}
+{% block title %}
+<title>Dashboard</title>
+{% endblock %}
+{% block body %}
+<h2 class="title is-size-4 sec-title">{{ user.first_name }}'s Student Dashboard</h2>
+<div class="sec">
+    <div class="modules">
+        <div class="module box">
+            <h3 class="title is-size-6 mod-title">Today's Stats</h3>
+            <form action="/student/inputstats/" method="post">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="label">
+                        Hours worked
+                    </label>
+                    <div class="control">
+                        <input class="input is-small" type="number" name="hours_worked" step="0.01" required="" id="id_hours_worked" value="{{ stats.hours_worked }}">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label">
+                        Memorization time
+                    </label>
+                    <div class="control">
+                        <input class="input is-small" type="number" name="memorization_time" required="" id="id_memorization_time" value="{{ stats.memorization_time }}">
+                    </div>
+                </div>
+                {% if mem_info.practice_quiz_link %}
+                <div class="field">
+                    <label class="label">
+                        Practice quiz score
+                    </label>
+                    <div class="control">
+                        <input class="input" type="number" name="practice_quiz_score" required="" id="id_practice_quiz_score" value="{{ stats.practice_quiz_score }}">
+                    </div>
+                </div>
+                {% endif %}
+                <div class="field has-addons">
+                    <div class="control">
+                        <button type="button" class="js-modal-trigger button is-small" data-target="test-modal">
+                            <span>
+                                Test
+                            </span>
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="control">
+                        <button type="button" class="js-modal-trigger button is-small" data-target="challenge-modal">
+                            <span>
+                                Challenge
+                            </span>
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="field has-addons">
+                    <div class="control">
+                        <button type="button" class="js-modal-trigger button is-small" data-target="lesson-modal">
+                            <span>
+                                Lesson
+                            </span>
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="control">
+                        <button type="button" class="js-modal-trigger button is-small" data-target="category-modal">
+                            <span>
+                                Category
+                            </span>
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                {% if tests_taken %}
+                <div class="field">
+                    <label class="label">Tests Taken:</label>
+                    <ul>
+                        {% for test in tests_taken %}
+                        <li>
+                            <p class="content">{{ test.test }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% if challenges_taken %}
+                <div class="field">
+                    <label class="label">Challenges Taken:</label>
+                    <ul>
+                        {% for challenge in challenges_taken %}
+                        <li>
+                            <p class="content">{{ challenge.challenge }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% if categories_done %}
+                <div class="field">
+                    <label class="label">Categories Done:</label>
+                    <ul>
+                        {% for category in categories_done %}
+                        <li>
+                            <p class="content">{{ category.category }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% if lessons_done %}
+                <div class="field">
+                    <label class="label">Lessons Done:</label>
+                    <ul>
+                        {% for lesson in lessons_done %}
+                        <li>
+                            <p class="content">{{ lesson.lesson }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <div class="control">
+                    <button class="button" type="submit" value="Save">Save</button>
+                </div>
+
+            </form>
+        </div>
+
+
+        <div class="module box">
+            <h3 class="title is-size-6 mod-title">{{ week }} Memorization Info</h3>
+            <div class="memorization">
+                {% if mem_info.memorization_link %}
+                <div class="mem-item">
+                    <a href="{{ mem_info.memorization_link }}" target="_blank">Memorization Material</a>
+                </div>
+                {% endif %}
+                {% if mem_info.answer_sheet %}
+                <div class="mem-item">
+                    <a href="{{ mem_info.answer_sheet }}" target="_blank">Answer Sheet</a>
+                </div>
+                {% endif %}
+                {% if mem_info.quizlet %}
+                <div class="mem-item">
+                    <a href="{{ mem_info.quizlet }}" target="_blank">Quizlet</a>
+                </div>
+                {% endif %}
+                {% if mem_info.extra_practice %}
+                <div class="mem-item">
+                    <a href="{{ mem_info.extra_practice }}" target="_blank">Extra Practice</a>
+                </div>
+                {% endif %}
+                {% if mem_info.practice_quiz_link %}
+                <div class="mem-item">
+                    <a href="{{ mem_info.practice_quiz_link }}" target="_blank">Practice Quiz Link</a>
+                </div>
+                {% endif %}
+                {% if mem_info.video_link %}
+                <div class="mem-item">
+                    <a href="{{ mem_info.video_link }}" target="_blank">Video Link</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="test-modal" class="modal">
+    <div class="modal-background"></div>
+  
+    <div class="modal-content">
+      <div class="box">
+        <form action="/student/newtest/" method="post">
+            {% csrf_token %}
+            <div class="field">
+                <label class="label">Test</label>
+                <div class="control">
+                    <div class="select">
+                        {{ test_form.test }}
+                    </div>
+                </div>
+            </div>
+
+            <label class="label">English</label>
+            <div class="subject-field-group">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="english_tried" max="75" id="id_english_tried" placeholder="tried/75">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="english_correct" max="75" id="id_english_correct" placeholder="correct/75">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="english_score" max="36" id="id_english_score" placeholder="score/36">
+                    </div>
+                </div>
+            </div>
+
+            <label class="label">Math</label>
+            <div class="subject-field-group">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="math_tried" max="60" id="id_math_tried" placeholder="tried/60">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="math_correct" max="60" id="id_math_correct" placeholder="correct/60">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="math_score" max="36" id="id_math_score" placeholder="score/36">
+                    </div>
+                </div>
+            </div>
+            
+            <label class="label">Reading</label>
+            <div class="subject-field-group">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="reading_tried" max="40" id="id_reading_tried" placeholder="tried/40">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="reading_correct" max="40" id="id_reading_correct" placeholder="correct/40">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="reading_score" max="36" id="id_reading_score" placeholder="score/36">
+                    </div>
+                </div>    
+            </div>
+            
+            <div class="label">Science</div>
+            <div class="subject-field-group">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="science_tried" max="40" id="id_science_tried" placeholder="tried/40">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="science_correct" max="40" id="id_science_correct" placeholder="correct/40">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-small" type="number" name="science_score" max="36" id="id_science_score" placeholder="score/36">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control">
+                <button class="button is-success" type="submit">Save</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<div id="challenge-modal" class="modal">
+    <div class="modal-background"></div>
+  
+    <div class="modal-content">
+      <div class="box">
+        <form action="/student/newchallenge/" method="post">
+            {% csrf_token %}
+            <div class="field">
+                <label class="label">Challenge</label>
+                <div class="select">
+                    {{ challenge_form.challenge }}
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Total Questions Correct</label>
+                <div class="control">
+                    <input class="input is-small" type="number" name="total_correct" id="id_total_correct" required>
+                </div>
+            </div>
+
+            <div class="control">
+                <button class="button is-success" type="submit">Save</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<div id="lesson-modal" class="modal">
+    <div class="modal-background"></div>
+  
+    <div class="modal-content">
+      <div class="box">
+        <form action="/student/newlesson/" method="post">
+            {% csrf_token %}
+
+            <div class="field">
+                <label class="label">Lesson</label>
+                <div class="control">
+                    <div class="select">
+                        {{ lesson_form.lesson }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Time Spent (minutes)</label>
+                <div class="control">
+                    <input class="input is-small" type="number" name="time_spent" id="id_time_spent">
+                </div>
+            </div>
+
+            <div class="control">
+                <button class="button is-success" type="submit">Save</button>
+            </div>
+        </form>
+
+        
+      </div>
+    </div>
+  
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<div id="category-modal" class="modal">
+    <div class="modal-background"></div>
+  
+    <div class="modal-content">
+      <div class="box">
+        <form action="/student/newcategory/" method="post">
+            {% csrf_token %}
+            <div class="field">
+                <label class="label">Category</label>
+                <div class="control">
+                    <div class="select">
+                        {{ category_form.category }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Time Spent (minutes)</label>
+                <div class="control">
+                    <input class="input is-small" type="number" name="time_spent" id="id_time_spent" required>
+                </div>
+            </div>
+
+            <div class="control">
+                <button class="button is-success" type="submit">Save</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+{% endblock %}
+
+

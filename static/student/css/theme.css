@@ -1,0 +1,201 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+    v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, 
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+margin: 0;
+padding: 0;
+border: 0;
+font-size: 100%;
+vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+display: block;
+}
+
+
+body {
+   line-height: 1;
+}
+ol, ul {
+   list-style: none;
+}
+blockquote, q {
+quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0; 
+}
+
+:root {
+    --primary-red: rgb(247, 50, 50);
+    --grey-lighter: hsl(0, 0%, 86%);
+    --grey-light: hsl(0, 0%, 71%);
+}
+html {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+    background-color: var(--primary-red);
+}
+html::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+.dash-head {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    z-index: 9999;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5)
+}
+.auth-box {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.auth {
+    margin-top: 100px;
+}
+.lesson {
+    width: 100%;
+    border: 2px solid black;
+}
+.auth-submit {
+    width: 100%;
+}
+.auth-link {
+    display: flex;
+    justify-content: flex-end;
+}
+.nav-btn {
+    border-color: var(--primary-red);
+    color: var(--primary-red);
+}
+.dash-head img {
+    height: 100px;
+}
+.quiz-info {
+    text-align: justify;
+}
+.sec-title {
+    padding: 8px;
+    border-bottom: 1px solid gray;
+}
+.navbar-brand {
+    width: 100%;
+}
+.is-disable {
+    pointer-events: none;
+    opacity: .65;
+}
+
+.sub-sec-text {
+    padding-left: 8px;
+    text-align: justify;
+}
+.main-box {
+    height: 78vh;
+    overflow-y: auto;
+}
+
+.checkbox {
+    padding: 8px;
+}
+.notification {
+    width: fit-content;
+    margin: 6px;
+    height: fit-content;
+}
+.combined-fields {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.field {
+    margin: 12px 8px;
+    width: auto;
+}
+.notif-container {
+    height: 80px;
+}
+.download-steps {
+    text-align: left;
+    margin: 0 5%;
+}
+
+.review-info {
+    padding-left: 8px;
+    border-left: 1px solid var(--grey-lighter);
+}
+.review-combined-fields {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+.review-info p {
+    margin: 0 24px;
+}
+
+#superscore-help {
+    text-align: left;
+}
+.sub-sec-text-contact {
+    padding-left: 8px;
+}
+
+.login-head {
+    background-color: white;
+    height: 100px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5)
+}
+.login-head img {
+    height: 100px;
+}
+.subject-cont {
+    height: 100%;
+    width: 100%;
+}
+.subject-title {
+    height: 5%;
+}
+.embedded-doc {
+    height: 90%;
+    width: 100%;
+}
+
+@media screen and (max-width: 575px) {
+    .dash-head {
+        display: flex;
+        flex-direction: column;
+    }
+    .sec-divide {
+        height: 150px;
+    }
+}
