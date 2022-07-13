@@ -11,9 +11,14 @@ import csv
 
 def check_in(request):
     can_check_in = validateCheckInTime()
+    stats = getStatCollection(request.user)
     if can_check_in:
-        stats = getStatCollection(request.user)
+        stats.did_check_in_before_noon = True
         stats.did_check_in = True
+        stats.save()
+    else:
+        stats.did_check_in = True
+        stats.did_check_in_before_noon = False
         stats.save()
     return redirect('/student/dashboard')
 
@@ -48,6 +53,7 @@ def input_stats(request):
         stat_collection.hours_worked = hours_worked
         stat_collection.memorization_time = memorization_time
         stat_collection.practice_quiz_score = practice_quiz_score
+        stat_collection.did_check_in = True
         stat_collection.save()
     else:
         print('invalid')

@@ -14,7 +14,7 @@
         </span>
         <span class="has-text-success">Checked in</span>
     </p>
-    {% elif can_check_in and not stats.did_check_in %}
+    {% else %}
     <a class="button is-small is-success" href="/student/checkin/">Check in</a>
     {% endif %}
 </div>
@@ -98,48 +98,48 @@
                     </div>
                 </div>
                 {% if tests_taken %}
-                <div class="field">
+                <div class="field done-field">
                     <label class="label">Tests Taken:</label>
                     <ul>
                         {% for test in tests_taken %}
                         <li>
-                            <p class="content">{{ test.test }}</p>
+                            {{ test.test }}
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
                 {% endif %}
                 {% if challenges_taken %}
-                <div class="field">
+                <div class="field done-field">
                     <label class="label">Challenges Taken:</label>
                     <ul>
                         {% for challenge in challenges_taken %}
                         <li>
-                            <p class="content">{{ challenge.challenge }}</p>
+                            {{ challenge.challenge }}
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
                 {% endif %}
                 {% if categories_done %}
-                <div class="field">
+                <div class="field done-field">
                     <label class="label">Categories Done:</label>
                     <ul>
                         {% for category in categories_done %}
                         <li>
-                            <p class="content">{{ category.category }}</p>
+                            {{ category.category }}
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
                 {% endif %}
                 {% if lessons_done %}
-                <div class="field">
+                <div class="field done-field">
                     <label class="label">Lessons Done:</label>
                     <ul>
                         {% for lesson in lessons_done %}
                         <li>
-                            <p class="content">{{ lesson.lesson }}</p>
+                            {{ lesson.lesson }}
                         </li>
                         {% endfor %}
                     </ul>
@@ -186,6 +186,15 @@
                     <a href="{{ mem_info.video_link }}" target="_blank">Video Link</a>
                 </div>
                 {% endif %}
+            </div>
+        </div>
+        <div class="module box">
+            <h3 class="title is-size-6 mod-title">Success Calculator</h3>
+            <div>
+                <p><strong>Start Score:</strong> {{ student.get_superscore }}</p>
+                <p> <strong>Goal Score:</strong> {{ student.goal_score }}</p>
+                <p><strong>Points Increased:</strong> {{ success_calc.points_increased }}</p>
+                <p><strong>Total Points Needed:</strong> {{ success_calc.total_points }}</p>
             </div>
         </div>
     </div>
@@ -312,7 +321,11 @@
             <div class="field">
                 <label class="label">Challenge</label>
                 <div class="select">
-                    {{ challenge_form.challenge }}
+                    <select name="challenge" id="id_challenge">
+                        {% for chal in challenges %}
+                        <option value="{{ chal.id }}">{{ chal }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
 
@@ -344,7 +357,11 @@
                 <label class="label">Lesson</label>
                 <div class="control">
                     <div class="select">
-                        {{ lesson_form.lesson }}
+                        <select name="lesson" id="id_lesson">
+                            {% for lesson in lessons %}
+                            <option value="{{ lesson.id }}">{{ lesson.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
             </div>
@@ -377,7 +394,11 @@
                 <label class="label">Category</label>
                 <div class="control">
                     <div class="select">
-                        {{ category_form.category }}
+                        <select name="category" id="id_category">
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
             </div>

@@ -29,7 +29,7 @@ class StudentProfile(models.Model):
         math = self.best_math
         read = self.best_read
         sci = self.best_sci
-        return ((eng + math + read + sci)/4)
+        return int(round(((eng + math + read + sci)/4), 0))
 
     def get_full_name(self):
         return (self.user.first_name + ' ' + self.user.last_name)
@@ -90,6 +90,7 @@ class DailyStatCollection(models.Model):
     week = models.ForeignKey(StudentWeek, on_delete=models.CASCADE, null=False, default=None)
     day = models.IntegerField(null=True)
     did_check_in = models.BooleanField(default=False)
+    did_check_in_before_noon = models.BooleanField(default=False)
     date = models.DateField(auto_now_add=True)
     hours_worked = models.DecimalField(max_digits=4, decimal_places=2, null=True)
     memorization_time = models.IntegerField(null=True)
@@ -190,7 +191,7 @@ class ChallengeDone(models.Model):
 
 
 class CategoryGroup(models.Model):
-    subject = models.CharField(max_length=100, null=False, default='english')
+    subject = models.CharField(max_length=20, null=False, default='english')
     name = models.CharField(max_length=200, null=True)
 
     def __str__(self):
@@ -199,6 +200,7 @@ class CategoryGroup(models.Model):
 
 class Category(models.Model):
     group = models.ForeignKey(CategoryGroup, on_delete=models.SET_NULL, null=True)
+    subject = models.CharField(max_length=20, null=True)
     name = models.CharField(max_length=200)
 
     def __str__(self):
@@ -229,3 +231,19 @@ class LessonDone(models.Model):
     day = models.ForeignKey(DailyStatCollection, on_delete=models.SET_NULL, null=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True)
     time_spent = models.IntegerField(null=True)
+
+
+class WeekendReport(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    student_week = models.ForeignKey(StudentWeek, on_delete=models.SET_NULL, null=True)
+    on_track = models.BooleanField(default=True)
+    score_needed = models.IntegerField(null=True)
+    actual_score = models.IntegerField(null=True)
+    projected_score = models.IntegerField(null=True)
+    point_offset = models.IntegerField(null=True)
+    hours_needed = models.IntegerField(null=True)
+    actual_hours = models.IntegerField(null=True)
+    
+    def daily_hours(self):
+        return self.hours_needed/4
+

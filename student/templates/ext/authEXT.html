@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" class="html">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/bulma.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/all.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'student/css/theme.css' %}">
+        {% block title %}
+        {% endblock %}
+    </head>
+    <body class="body">
+        <header class="student-header">
+            <div class="dash-head">
+              <img src="{% static 'student/images/oa_header_logo.png' %}" href="/student/dashboard">
+            </div>
+          </header>
+          <main>
+            <section class="section auth">
+              <div class="container box mt-3 is-has-background-light auth-box">
+                {% block body %}
+                {% endblock %}
+              </div>
+          </section> 
+          </main>
+
+
+
+          <script type="text/javascript" src="{% static 'bulma/js/all.js' %}"></script>
+          <script type="text/javascript" src="{% static 'student/js/auth.js' %}"></script>
+    </body>
+
+</html>

@@ -32,9 +32,7 @@ display: block;
 body {
    line-height: 1;
 }
-ol, ul {
-   list-style: none;
-}
+
 blockquote, q {
 quotes: none;
 }
@@ -214,6 +212,12 @@ html::-webkit-scrollbar {
     border-bottom: 1px solid gray;
     display: flex;
     justify-content: space-between;
+}
+.done-field ul {
+    margin-left: 8px;
+}
+.done-field ul li {
+    margin: 4px 0;
 }
 @media screen and (max-width: 575px) {
     .dash-head {

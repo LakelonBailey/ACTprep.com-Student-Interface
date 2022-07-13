@@ -1,11 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from student.models import ChallengeDone, TestDone
+from student.models import ChallengeDone, TestDone, Category, Challenge, Lesson
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from student.modules.studentTasks import *
 from pprint import PrettyPrinter
-from .forms import CategoryForm, LessonForm, TestForm, ChallengeForm
+from .forms import TestForm
 
 pp = PrettyPrinter(indent=2)
 
@@ -33,34 +33,39 @@ def index(request):
 def dashboard(request):
     if request.method == 'GET':
         user = request.user
+        student = StudentProfile.objects.get(user=user)
         stat_collection = getStatCollection(user)
+
         tests_taken = TestDone.objects.filter(day=stat_collection)
         challenges_taken = ChallengeDone.objects.filter(day=stat_collection)
         categories_done = CategoryDone.objects.filter(day=stat_collection)
         lessons_done = LessonDone.objects.filter(day=stat_collection)
+
         mem_info = stat_collection.week.memorization_week
         week = parseWeekString(mem_info.week)
 
-        can_check_in = validateCheckInTime()
+        subject = mem_info.week.split('_')[0]
+        success_calc = getSuccessCalculations(student)
 
         test_form = TestForm()
-        challenge_form = ChallengeForm()
-        category_form = CategoryForm()
-        lesson_form = LessonForm()
+        challenges = Challenge.objects.filter(subject=subject)
+        categories = Category.objects.filter(subject=subject)
+        lessons = Lesson.objects.filter(subject=subject)
 
         context = {
+            'student': student,
             'stats': stat_collection,
             'mem_info': mem_info,
             'week': week,
             'test_form': test_form,
             'tests_taken': tests_taken,
-            'challenge_form': challenge_form,
+            'challenges': challenges,
+            'categories': categories,
             'challenges_taken': challenges_taken,
-            'category_form': category_form,
             'categories_done': categories_done,
-            'lesson_form': lesson_form,
+            'lessons': lessons,
             'lessons_done': lessons_done,
-            'can_check_in': can_check_in
+            'success_calc': success_calc
         }
 
         return render(request, 'dashboard.html', context)

@@ -1,4 +1,5 @@
-from student.models import LessonDone, CategoryDone, Challenge, ChallengeDone, StudentProfile, StudentWeek, Test, DailyStatCollection, TestDone
+from math import ceil as roundup
+from student.models import *
 from datetime import datetime, timedelta
 
 
@@ -62,11 +63,11 @@ def getStatCollection(user):
     today = datetime.today() - timedelta(hours=4)
     today = today.date()
     weekday = today.weekday()
-    stat_collection = DailyStatCollection.objects.filter(day = weekday, user=user)
+    week = StudentWeek.objects.get(user=user, start_date__lte=today, end_date__gte=today)
+    stat_collection = DailyStatCollection.objects.filter(user=user, day=weekday, week=week)
     if stat_collection.exists():
         stat_collection = stat_collection[0]
     else:
-        week = StudentWeek.objects.get(user=user, start_date__lte=today, end_date__gte=today)
         stat_collection = DailyStatCollection.objects.create(
             user=user,
             week=week,
@@ -183,3 +184,139 @@ def validateCheckInTime():
         return False
     else:
         return True
+
+
+def getSuccessCalculations(student):
+    user = student.user
+    start_eng = student.best_eng
+    start_math = student.best_math
+    start_read = student.best_read
+    start_sci = student.best_sci
+
+    increase = student.goal_score - student.get_superscore()
+
+    tests = TestDone.objects.filter(user=user)
+    if tests.exists():
+        max_eng = 0
+        max_math = 0
+        max_read = 0
+        max_sci = 0
+        for test in tests:
+            if test.english_score:
+                if test.english_score > max_eng:
+                    max_eng = test.english_score
+            if test.math_score:
+                if test.math_score > max_math:
+                    max_math = test.math_score
+            if test.reading_score:
+                if test.reading_score > max_read:
+                    max_read = test.reading_score
+            if test.science_score:
+                if test.science_score > max_sci:
+                    max_sci= test.science_score
+    
+        points = 0
+        total_points = increase * 4 + 12
+
+        eng_points = max_eng - start_eng
+        if eng_points > 0:
+            points += eng_points
+
+        math_points = max_math - start_math
+        if math_points > 0:
+            points += math_points
+
+        read_points = max_read - start_read
+        if read_points > 0:
+            points += read_points
+
+        sci_points = max_sci - start_sci
+        if sci_points > 0:
+            points += sci_points
+
+
+    
+    
+
+    
+    calculations = {
+        'total_points': total_points,
+        'points_increased': points
+    }
+
+    return calculations
+
+
+def getProjections(student):
+    start_eng = student.best_eng
+    start_math = student.best_math
+    start_read = student.best_read
+    start_sci = student.best_sci
+
+    eng_mult = .362
+    math_mult = .1867
+    read_mult = .25
+    sci_mult = .192
+
+    increase = student.goal_score - student.get_superscore()
+
+
+    remainder = 0
+    iteration = 0
+
+    while(iteration < 2):
+        eng_increase = (increase * 4 * eng_mult) + 3
+        eng_increase += remainder
+        eng_goal = start_eng + eng_increase
+        remainder = eng_goal - 36
+        if remainder > 0:
+            eng_goal = 36
+        else:
+            remainder = 0
+        eng_increase = eng_goal - start_eng
+
+        read_increase = (increase * 4 * read_mult) + 3
+        read_increase += remainder
+        read_goal = start_read + read_increase
+        remainder = read_goal - 36
+        if remainder > 0:
+            read_goal = 36
+        else:
+            remainder = 0
+        read_increase = read_goal - start_read
+
+        math_increase = (increase * 4 * math_mult) + 3
+        math_increase += remainder
+        math_goal = start_math + math_increase
+        remainder = math_goal - 36
+        if remainder > 0:
+            math_goal = 36
+        else:
+            remainder = 0
+        math_increase = math_goal - start_math
+
+        sci_increase = (increase * 4 * sci_mult) + 3
+        sci_increase += remainder
+        sci_goal = start_sci + sci_increase
+        remainder = sci_goal - 36
+        if remainder > 0:
+            sci_goal = 36
+        else:
+            remainder = 0
+        sci_increase = sci_goal - start_sci
+
+        if remainder == 0:
+            break
+        iteration += 1
+
+
+        projections = {
+        'start_score': student.get_superscore(),
+        'goal_score': student.goal_score,
+        'eng_goal': roundup(eng_goal),
+        'math_goal': roundup(math_goal),
+        'read_goal': roundup(read_goal),
+        'sci_goal': roundup(sci_goal)
+        }
+
+        return projections

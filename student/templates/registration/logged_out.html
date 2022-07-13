@@ -1,0 +1,14 @@
+{% extends "ext/authEXT.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'student:index' %}">{% translate 'Home' %}</a></div>{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block body %}
+
+<p>{% translate "You've been succesfully logged out!" %}</p>
+
+<p><a href="/student/">{% translate 'Log in again' %}</a></p>
+
+{% endblock %}
