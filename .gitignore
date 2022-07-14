@@ -1,3 +1,5 @@
 venv/
 cloud_sql_proxy
 .vscode
+student/migrations/
+student/__pycache__/
