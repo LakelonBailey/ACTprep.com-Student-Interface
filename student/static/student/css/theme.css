@@ -213,11 +213,12 @@ html::-webkit-scrollbar {
     display: flex;
     justify-content: space-between;
 }
-.done-field ul {
-    margin-left: 8px;
-}
-.done-field ul li {
+
+.sub-list {
+    list-style-type: disc;
+    list-style-position: inside;
     margin: 4px 0;
+    margin-left: 8px;
 }
 @media screen and (max-width: 575px) {
     .dash-head {

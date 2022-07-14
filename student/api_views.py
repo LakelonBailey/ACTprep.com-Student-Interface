@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from student.models import DailyStatCollection
 from student.modules.studentTasks import *
 from datetime import datetime
@@ -7,6 +7,9 @@ from .forms import CategoryForm, DailyStatForm, LessonForm, TestForm, ChallengeF
 from actprep.settings import BASE_DIR
 import os
 import csv
+from pprint import PrettyPrinter
+
+pp = PrettyPrinter(indent=2)
 
 
 def check_in(request):
@@ -24,7 +27,7 @@ def check_in(request):
 
 
 def add_csv_data(request):
-    file = 'Challenges.csv'
+    file = 'ProgramDay.csv'
     file_path = os.path.join(BASE_DIR, 'student/data/' + file)
     file = open(file_path)
     data = csv.reader(file)
@@ -32,24 +35,30 @@ def add_csv_data(request):
     objArr = []
 
     for row in data:
-        memDayObj = {}
+        obj = {}
         for i in range(len(row)):
-            memDayObj[header[i]] = row[i]
-        objArr.append(memDayObj)
-    return HttpResponse(200)
+            obj[header[i]] = row[i]
+        objArr.append(obj)
+
+    schedule_items = []
+    for item in objArr:
+        for x in item['schedule'].split('_'):
+            if not x in schedule_items:
+                schedule_items.append(x)
+    return HttpResponse(pp.pformat(schedule_items))
 
 
 def input_stats(request):
     form = DailyStatForm(request.POST)
     if form.is_valid():
-        weekday = datetime.today().weekday()
+        today = datetime.today()
 
         data = form.cleaned_data
         hours_worked = float(data['hours_worked'])
         memorization_time = data['memorization_time']
         practice_quiz_score = data['practice_quiz_score']
 
-        stat_collection = DailyStatCollection.objects.get(user=request.user, day=weekday)
+        stat_collection = DailyStatCollection.objects.get(user=request.user, date=today)
         stat_collection.hours_worked = hours_worked
         stat_collection.memorization_time = memorization_time
         stat_collection.practice_quiz_score = practice_quiz_score

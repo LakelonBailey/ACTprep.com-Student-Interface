@@ -37,20 +37,6 @@ class StudentProfile(models.Model):
     def __str__(self):
         return (self.user.first_name + ' ' + self.user.last_name)
 
-
-class WeeklyMemorizationInfo(models.Model):
-    week = models.CharField(max_length=100, null=True)
-    memorization_link = models.CharField(max_length=500, null=True)
-    answer_sheet = models.CharField(max_length=500, null=True)
-    quizlet = models.CharField(max_length=500, null=True)
-    extra_practice = models.CharField(max_length=500, null=True)
-    practice_quiz_link = models.CharField(max_length=500, null=True)
-    video_link = models.CharField(max_length=500, null=True)
-
-    def __str__(self):
-        return self.week
-
-
 class StudentWeek(models.Model):
     user = models.ForeignKey(
                             User,
@@ -58,12 +44,6 @@ class StudentWeek(models.Model):
                             null=False,
                             default=None
                             )
-    memorization_week = models.ForeignKey(
-                                        WeeklyMemorizationInfo,
-                                        on_delete=models.SET_NULL,
-                                        null=True
-                                        )
-
     start_day = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField(null=True)
@@ -80,6 +60,21 @@ class StudentWeek(models.Model):
         return name
 
 
+class ProgramDay(models.Model):
+    day = models.CharField(max_length=100, null=True)
+    memorization_link = models.CharField(max_length=500, null=True)
+    answer_sheet = models.CharField(max_length=500, null=True)
+    quizlet = models.CharField(max_length=500, null=True)
+    extra_practice = models.CharField(max_length=500, null=True)
+    practice_quiz_link = models.CharField(max_length=500, null=True)
+    video_link = models.CharField(max_length=500, null=True)
+    in_class_quiz = models.CharField(max_length=500, null=True)
+    schedule = ArrayField(models.CharField(max_length=100), null=True)
+
+    def __str__(self):
+        return self.day
+
+
 class DailyStatCollection(models.Model):
     user = models.ForeignKey(
                             User,
@@ -88,10 +83,11 @@ class DailyStatCollection(models.Model):
                             on_delete=models.CASCADE
                             )
     week = models.ForeignKey(StudentWeek, on_delete=models.CASCADE, null=False, default=None)
-    day = models.IntegerField(null=True)
+    work_day = models.IntegerField(null=True)
+    program_day = models.ForeignKey(ProgramDay, on_delete=models.SET_NULL, null=True)
     did_check_in = models.BooleanField(default=False)
     did_check_in_before_noon = models.BooleanField(default=False)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     hours_worked = models.DecimalField(max_digits=4, decimal_places=2, null=True)
     memorization_time = models.IntegerField(null=True)
     practice_quiz_score = models.IntegerField(null=True)
@@ -246,4 +242,3 @@ class WeekendReport(models.Model):
     
     def daily_hours(self):
         return self.hours_needed/4
-

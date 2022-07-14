@@ -5,7 +5,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from student.modules.studentTasks import *
 from pprint import PrettyPrinter
-from .forms import TestForm
+from .forms import ChallengeForm, TestForm
 
 pp = PrettyPrinter(indent=2)
 
@@ -33,39 +33,38 @@ def index(request):
 def dashboard(request):
     if request.method == 'GET':
         user = request.user
+        
         student = StudentProfile.objects.get(user=user)
         stat_collection = getStatCollection(user)
-
         tests_taken = TestDone.objects.filter(day=stat_collection)
         challenges_taken = ChallengeDone.objects.filter(day=stat_collection)
         categories_done = CategoryDone.objects.filter(day=stat_collection)
         lessons_done = LessonDone.objects.filter(day=stat_collection)
-
-        mem_info = stat_collection.week.memorization_week
-        week = parseWeekString(mem_info.week)
-
-        subject = mem_info.week.split('_')[0]
         success_calc = getSuccessCalculations(student)
+        day = parseDayString(stat_collection.program_day.day)
 
-        test_form = TestForm()
-        challenges = Challenge.objects.filter(subject=subject)
+        subject = stat_collection.program_day.day.split('_')[0]
+
         categories = Category.objects.filter(subject=subject)
+        challenges = Challenge.objects.filter(subject=subject)
         lessons = Lesson.objects.filter(subject=subject)
+        tests = Test.objects.all()
 
         context = {
             'student': student,
             'stats': stat_collection,
-            'mem_info': mem_info,
-            'week': week,
-            'test_form': test_form,
+            'tests': tests,
             'tests_taken': tests_taken,
-            'challenges': challenges,
-            'categories': categories,
             'challenges_taken': challenges_taken,
             'categories_done': categories_done,
-            'lessons': lessons,
             'lessons_done': lessons_done,
-            'success_calc': success_calc
+            'success_calc': success_calc,
+            'program_day': stat_collection.program_day,
+            'day': day,
+            'schedule': stat_collection.program_day.schedule,
+            'categories': categories,
+            'lessons': lessons,
+            'challenges': challenges
         }
 
         return render(request, 'dashboard.html', context)

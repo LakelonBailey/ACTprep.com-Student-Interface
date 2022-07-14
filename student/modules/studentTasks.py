@@ -11,10 +11,10 @@ def verifyStudent(user):
         return False
 
 
-def parseWeekString(week):
-    week_arr = week.split('_')
-    week = week_arr[0].capitalize() + ' Week ' + week_arr[1]
-    return week
+def parseDayString(day):
+    day_arr = day.split('_')
+    day = day_arr[0].capitalize() + ' Week ' + day_arr[1] + ' Day ' + day_arr[2]
+    return day
 
 
 def addTest(arr):
@@ -59,22 +59,59 @@ def addChallenge(arr):
         challenge.save()
 
 
+def addProgramDay(arr):
+    for day in arr:
+        schedule = day['schedule'].split('_')
+        ProgramDay.objects.create(
+            day=day['day'],
+            memorization_link=day['memorization_link'],
+            answer_sheet=day['answer_sheet'],
+            quizlet=day['quizlet'],
+            extra_practice=day['extra_practice'],
+            practice_quiz_link=day['practice_quiz_link'],
+            video_link=day['video_link'],
+            in_class_quiz=day['in_class_quiz'],
+            schedule=schedule
+        )
+
+
 def getStatCollection(user):
     today = datetime.today() - timedelta(hours=4)
     today = today.date()
-    weekday = today.weekday()
     week = StudentWeek.objects.get(user=user, start_date__lte=today, end_date__gte=today)
-    stat_collection = DailyStatCollection.objects.filter(user=user, day=weekday, week=week)
-    if stat_collection.exists():
-        stat_collection = stat_collection[0]
+
+    week_stats = DailyStatCollection.objects.filter(user=user, week=week)
+    if week_stats.exists():
+        day_stats = week_stats.filter(date=today)
+        if day_stats.exists():
+            stats = day_stats[0]
+        else:
+            if today.day == week.off_day:
+                work_day = week.subject_week + '_off'
+            else:
+                week_stats = week_stats.order_by('-work_day')
+                work_day = week_stats[0].work_day + 1
+                program_day_string = week.subject_week + '_' + str(work_day)
+            program_day = ProgramDay.objects.get(day=program_day_string)
+            stats = DailyStatCollection.objects.create(
+                user=user,
+                week=week,
+                work_day=work_day,
+                program_day=program_day,
+                date=today
+            )
+        return stats
     else:
-        stat_collection = DailyStatCollection.objects.create(
+        start_program_day_string = week.subject_week + '_0'
+        start_program_day = ProgramDay.objects.get(day=start_program_day_string)
+        DailyStatCollection.objects.create(
             user=user,
             week=week,
-            day=weekday
+            work_day = 0,
+            program_day=start_program_day,
+            date=week.start_date
         )
-        stat_collection.save()
-    return stat_collection
+        return getStatCollection(user)
         
 
 def addNewTest(data, user):
@@ -192,9 +229,14 @@ def getSuccessCalculations(student):
     start_math = student.best_math
     start_read = student.best_read
     start_sci = student.best_sci
-
+    hours_worked = 0
+    stats = DailyStatCollection.objects.filter(user=user)
+    for stat in stats:
+        if stat.hours_worked:
+            hours_worked += stat.hours_worked
     increase = student.goal_score - student.get_superscore()
-
+    hours = 25 * increase
+    total_points = increase * 4 + 12
     tests = TestDone.objects.filter(user=user)
     if tests.exists():
         max_eng = 0
@@ -216,7 +258,7 @@ def getSuccessCalculations(student):
                     max_sci= test.science_score
     
         points = 0
-        total_points = increase * 4 + 12
+        
 
         eng_points = max_eng - start_eng
         if eng_points > 0:
@@ -233,15 +275,14 @@ def getSuccessCalculations(student):
         sci_points = max_sci - start_sci
         if sci_points > 0:
             points += sci_points
-
-
-    
-    
-
+    else:
+        points = 0
     
     calculations = {
         'total_points': total_points,
-        'points_increased': points
+        'points_increased': points,
+        'total_hours': hours,
+        'hours_worked': hours_worked
     }
 
     return calculations
@@ -316,7 +357,7 @@ def getProjections(student):
         'eng_goal': roundup(eng_goal),
         'math_goal': roundup(math_goal),
         'read_goal': roundup(read_goal),
-        'sci_goal': roundup(sci_goal)
+        'sci_goal': roundup(sci_goal),
         }
 
         return projections
